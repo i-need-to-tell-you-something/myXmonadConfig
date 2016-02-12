@@ -10,11 +10,10 @@ import qualified XMonad.StackSet as W
 import qualified Data.Map as M
 import System.Exit
 import Graphics.X11.Xlib
+import Graphics.X11.ExtraTypes.XF86
 -- actions
 import XMonad.Actions.CycleWS
 import XMonad.Actions.WindowGo
-import qualified XMonad.Actions.Search as S
-import XMonad.Actions.Search
 import qualified XMonad.Actions.Submap as SM
 import XMonad.Actions.GridSelect
 import XMonad.Util.Run(spawnPipe)
@@ -64,10 +63,7 @@ myWorkspaces = ["1:notes", "2:steam", "3:browser", "4", "5", "6" ,"7:chat", "8",
 myManageHook :: ManageHook
 myManageHook = scratchpadManageHook (W.RationalRect 0.25 0.375 0.5 0.35) <+> ( composeAll . concat $
 --myManageHook = composeAll
-                [[ isFullscreen                  --> (doF W.focusDown <+> doFullFloat)
-                --, className =? "OpenOffice.org 3.1" --> doShift "5:doc" 
-                --, className =?  "Xmessage" 	--> doCenterFloat 
-                --, className =? "feh" 	--> doCenterFloat 
+                [[ isFullscreen --> (doF W.focusDown <+> doFullFloat)
                 , className =? "Firefox" --> doShift "3:browser"
                 , className =? "Skype" --> doShift "7:chat"]
                 ]
@@ -80,11 +76,14 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
         [ ((mod1Mask, xK_Print), spawn "ksnapshot -c")
         , ((0, xK_Print), spawn "ksnapshot")
         --, ((mod4Mask, xK_l), spawn "xscreensaver-command -lock")
-        -- volume control
-        , ((0, 0x1008ff13 ), spawn "amixer -q set Master 2dB+")
-        , ((0, 0x1008ff11 ), spawn "amixer -q set Master 2dB-")
-        --, ((0, 0x1008ff12 ), spawn "kcmshell5 kcm_pulseaudio") 
-        , ((0, 0x1008ff12 ), spawn "amixer -q -D pulse set Master toggle")
+        -- volume controls
+        , ((0, xF86XK_AudioRaiseVolume ), spawn "amixer -q set Master 2dB+")
+        , ((0, xF86XK_AudioLowerVolume ), spawn "amixer -q set Master 2dB-")
+        , ((0, xF86XK_AudioMute ), spawn "amixer -q -D pulse set Master toggle")
+        -- microphone volume controls TODO: testing
+        , ((mod5Mask, xK_F12 ), spawn "amixer -q set Capture 2dB+")
+        , ((mod5Mask, xK_F11 ), spawn "amixer -q set Capture 2dB-")
+        , ((mod5Mask, xF86XK_AudioMute ), spawn "amixer -q -D pulse set Capture toggle")
         --scripts
         , ((controlMask .|. shiftMask, xK_d), spawn "python3 /home/k/Scripts/date_iso_8601.py")
         , ((controlMask .|. shiftMask, xK_f), spawn "python3 /home/k/Scripts/date_personal_logs.py")
