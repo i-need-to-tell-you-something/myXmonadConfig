@@ -32,6 +32,7 @@ import System.IO
 main = do
     xmonad $ withUrgencyHook NoUrgencyHook $ defaultConfig
         { manageHook = myManageHook
+        , startupHook = myStartupHook
         , keys = myKeys
         , modMask = mod4Mask     -- Rebind Mod to the Windows key
         , terminal = myTerminal
