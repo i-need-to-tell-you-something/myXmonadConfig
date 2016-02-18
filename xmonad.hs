@@ -76,6 +76,8 @@ myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
         [ ((mod1Mask, xK_Print), spawn "ksnapshot -c")
         , ((0, xK_Print), spawn "ksnapshot")
+        --xkill imitating KWin one
+        , ((controlMask .|. mod1Mask, xK_Escape), spawn "xkill")
         --, ((mod4Mask, xK_l), spawn "xscreensaver-command -lock")
         -- volume controls
         , ((0, xF86XK_AudioRaiseVolume ), spawn "amixer -q set Master 2dB+")
@@ -103,7 +105,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
         , ((modMask .|. shiftMask, xK_c ), kill)
         , ((mod1Mask, xK_F4 ), kill)
         
-        ,((modMask , xK_p), shellPrompt myXPConfig)
+        ,((modMask , xK_r), shellPrompt myXPConfig)
  
  
         -- GridSelect
