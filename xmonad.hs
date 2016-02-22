@@ -3,6 +3,7 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.UrgencyHook
 import XMonad.Hooks.ManageHelpers
+import XMonad.Hooks.EwmhDesktops
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Util.Scratchpad (scratchpadSpawnAction, scratchpadManageHook, scratchpadFilterOutWorkspace)
@@ -33,6 +34,7 @@ main = do
     xmonad $ withUrgencyHook NoUrgencyHook $ defaultConfig
         { manageHook = myManageHook
         , startupHook = myStartupHook
+        , handleEventHook = handleEventHook defaultConfig <+> fullscreenEventHook
         , keys = myKeys
         , modMask = mod4Mask     -- Rebind Mod to the Windows key
         , terminal = myTerminal
