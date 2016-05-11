@@ -30,6 +30,14 @@ import XMonad.Layout.PerWorkspace (onWorkspace)
 import XMonad.Layout.Grid
 import System.IO
 
+        --TODO:
+        -- automatically generated cheatsheet
+        -- fix fullscreen games (atm everything has to be borderless fullscreen)
+        -- fix environment related bugs (default browser; locale)
+        -- kwin style shutdown & restart hotkeys
+        -- "Copying (100% of 343.4 MiB) — Dolphin" > doFloat
+
+
 main = do
     xmonad $ withUrgencyHook NoUrgencyHook $ defaultConfig
         { manageHook = myManageHook
@@ -40,6 +48,7 @@ main = do
         , terminal = myTerminal
         , workspaces = myWorkspaces
         , focusFollowsMouse = False
+        , clickJustFocuses = False  -- "False" makes it also be passed to window
         }
 
 myStartupHook = do
@@ -67,7 +76,7 @@ myManageHook :: ManageHook
 myManageHook = scratchpadManageHook (W.RationalRect 0.25 0.375 0.5 0.35) <+> ( composeAll . concat $
 --myManageHook = composeAll
                 [[ isFullscreen --> (doF W.focusDown <+> doFullFloat)
-                , className =? "Evernote.exe" --> doShift "1:notes"
+                , className =? "Evernote.exe" --> doShift "1:notes" --doesnt work atm
                 , className =? "Firefox" --> doShift "3:browser"
                 , className =? "Skype" --> doShift "2:chat"
                 , className =? "Pidgin" --> doShift "2:chat"
@@ -97,8 +106,14 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
         --brightness scripts
         , ((controlMask .|. shiftMask, xK_F4), spawn "/home/k/Scripts/brightness.sh down")
         , ((controlMask .|. shiftMask, xK_F5), spawn "/home/k/Scripts/brightness.sh up")
-        --automatic cheatsheet
-        --shutdown & restart
+        --starting programs
+        , ((modMask, xK_e), spawn "dolphin")
+        , ((modMask .|. mod1Mask, xK_3), runOrRaise "firefox" (className =? "Firefox"))
+        , ((modMask .|. mod1Mask, xK_2), runOrRaise "pidgin" (className =? "Pidgin"))
+        , ((modMask .|. mod1Mask, xK_1), spawn "playonlinux --run Evernote")
+        --the following one didnt work because of className matching
+        --, ((modMask .|. mod1Mask, xK_1), runOrRaise "playonlinux --run Evernote" (className =? "Evernote.exe"))
+        , ((modMask .|. mod1Mask, xK_4), spawn "ksysguard & konsole -e watch sensors")
         
         
         
@@ -161,19 +176,21 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
         [((m .|. modMask, k), windows $ f i)
             | (i, k) <- zip (XMonad.workspaces conf) [xK_0 .. xK_9]
             , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
-        ++
-        -- mod-[w,e] %! switch to twinview screen 1/2
-        -- mod-shift-[w,e] %! move window to screen 1/2
-        [((m .|. modMask, key), screenWorkspace sc >>= flip whenJust (windows . f))
-            | (key, sc) <- zip [xK_e, xK_w] [0..]
-            , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+        
+        --idk what the following part is
+--         ++
+--         -- mod-[w,e] %! switch to twinview screen 1/2
+--         -- mod-shift-[w,e] %! move window to screen 1/2
+--         [((m .|. modMask, key), screenWorkspace sc >>= flip whenJust (windows . f))
+--             | (key, sc) <- zip [xK_e, xK_w] [0..]
+--             , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
             
 
 -- some nice colors for the prompt windows to match the dzen status bar.
 myXPConfig = defaultXPConfig                                    
     { 
 	font  = "-*-terminus-*-*-*-*-12-*-*-*-*-*-*-u" 
-	,fgColor = "#00FFFF"
+	,fgColor = "#18f018"
 	, bgColor = "#000000"
 	, bgHLight    = "#000000"
 	, fgHLight    = "#FF0000"
