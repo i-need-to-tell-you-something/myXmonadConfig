@@ -60,16 +60,18 @@ myModMask = mod4Mask
         
 --Workspaces
 myWorkspaces :: [WorkspaceId]
-myWorkspaces = ["1:notes", "2:steam", "3:browser", "4", "5", "6" ,"7:chat", "8", "9"] 
+myWorkspaces = ["0", "1:notes", "2:chat", "3:browser", "4", "5", "6" ,"7", "8", "9"] 
 --
 
 myManageHook :: ManageHook
 myManageHook = scratchpadManageHook (W.RationalRect 0.25 0.375 0.5 0.35) <+> ( composeAll . concat $
 --myManageHook = composeAll
                 [[ isFullscreen --> (doF W.focusDown <+> doFullFloat)
+                , className =? "Evernote.exe" --> doShift "1:notes"
                 , className =? "Firefox" --> doShift "3:browser"
-                , className =? "Skype" --> doShift "7:chat"]
-                ]
+                , className =? "Skype" --> doShift "2:chat"
+                , className =? "Pidgin" --> doShift "2:chat"
+                ]]
                         )  <+> manageDocks
 
 
@@ -95,7 +97,6 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
         --brightness scripts
         , ((controlMask .|. shiftMask, xK_F4), spawn "/home/k/Scripts/brightness.sh down")
         , ((controlMask .|. shiftMask, xK_F5), spawn "/home/k/Scripts/brightness.sh up")
-        --xkill just like in plasma5
         --automatic cheatsheet
         --shutdown & restart
         
@@ -107,11 +108,11 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
         , ((modMask .|. shiftMask, xK_c ), kill)
         , ((mod1Mask, xK_F4 ), kill)
         
-        ,((modMask , xK_r), shellPrompt myXPConfig)
+        , ((modMask , xK_r), shellPrompt myXPConfig)
  
  
         -- GridSelect
-        , ((modMask, xK_g), goToSelected defaultGSConfig)
+        , ((modMask, xK_s), goToSelected defaultGSConfig)
     
         -- layouts
         , ((modMask, xK_space ), sendMessage NextLayout)
@@ -158,7 +159,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
         -- mod-[1..9] %! Switch to workspace N
         -- mod-shift-[1..9] %! Move client to workspace N
         [((m .|. modMask, k), windows $ f i)
-            | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
+            | (i, k) <- zip (XMonad.workspaces conf) [xK_0 .. xK_9]
             , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
         ++
         -- mod-[w,e] %! switch to twinview screen 1/2
